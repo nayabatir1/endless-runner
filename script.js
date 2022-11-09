@@ -1,5 +1,6 @@
 /** @type {HTMLCanvasElement} */
 
+import { InputHandler } from "./inputHandler.js";
 import { Player } from "./player.js";
 
 const canvas = document.getElementById("canvas1");
@@ -12,10 +13,11 @@ class Game {
     this.width = width;
     this.height = height;
     this.player = new Player(this, "run");
+    this.input = new InputHandler();
   }
 
   update() {
-    this.player.update();
+    this.player.update(this.input.keys);
   }
 
   draw(context) {

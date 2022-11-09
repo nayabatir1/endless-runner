@@ -1,5 +1,4 @@
 import { PlayerImg } from "./Assets.js";
-import { InputHandler } from "./inputHandler.js";
 
 const FRAMES = {
   stand: { index: 0, frames: 6 },
@@ -24,14 +23,13 @@ export class Player {
     this.dx = 0; // destination x
     this.dy = this.game.height - this.height; // destination y
     this.vy = 0;
-    this.input = new InputHandler();
     this.speed = 10;
     this.frameRate = 4;
     this.counter = 0;
     this.weight = 1;
   }
 
-  update() {
+  update(keys) {
     if (this.frame >= FRAMES[this.playerType].frames) this.frame = 0;
     this.counter++;
 
@@ -42,26 +40,26 @@ export class Player {
 
     this.dy += this.vy;
 
-    if (this.input.keys.length) {
-      const direction = this.input.getKey().slice(5);
-      switch (direction) {
-        case "Left":
-          if (this.dx > 0) this.dx -= this.speed;
-          break;
-        case "Right":
-          if (this.dx < window.width - this.width) this.dx += this.speed;
-          break;
-        case "Down":
-          this.playerType = "sit";
-          break;
-        case "Up":
-          this.playerType = "run";
-          if (this.isOnGround()) {
-            this.vy -= 20;
-            this.dy += this.vy;
-          }
+    if (keys.includes("ArrowLeft") && this.playerType !== "sit" && this.dx > 0)
+      this.dx -= this.speed;
+    if (
+      keys.includes("ArrowRight") &&
+      this.playerType !== "sit" &&
+      this.dx < window.width - this.width
+    )
+      this.dx += this.speed;
+
+    if (keys.includes("ArrowUp")) {
+      this.playerType = "run";
+
+      if (this.isOnGround()) {
+        this.vy -= 20;
+        this.dy += this.vy;
       }
     }
+
+    if (keys.includes("ArrowDown") && this.isOnGround())
+      this.playerType = "sit";
 
     if (!this.isOnGround()) this.vy += this.weight;
     else this.vy = 0;
