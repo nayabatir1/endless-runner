@@ -14,14 +14,15 @@ const FRAMES = {
 };
 
 export class Player {
-  constructor(game, playerType) {
+  constructor(game, playerType, layerHeight) {
+    this.layerHeight = layerHeight;
     this.playerType = playerType; // will traverse along y in player image
     this.frame = 0; // will traverse along x in player image
     this.game = game;
     this.width = 100;
     this.height = 91.3;
     this.dx = 0; // destination x
-    this.dy = this.game.height - this.height; // destination y
+    this.dy = this.game.height - this.height - this.layerHeight; // destination y
     this.vy = 0;
     this.speed = 10;
     this.frameRate = 4;
@@ -40,29 +41,32 @@ export class Player {
 
     this.dy += this.vy;
 
-    if (keys.includes("ArrowLeft") && this.playerType !== "sit" && this.dx > 0)
+    if (keys.has("ArrowLeft") && this.playerType !== "sit" && this.dx > 0)
       this.dx -= this.speed;
+
     if (
-      keys.includes("ArrowRight") &&
+      keys.has("ArrowRight") &&
       this.playerType !== "sit" &&
       this.dx < window.width - this.width
     )
       this.dx += this.speed;
 
-    if (keys.includes("ArrowUp")) {
-      this.playerType = "run";
-
-      if (this.isOnGround()) {
-        this.vy -= 20;
-        this.dy += this.vy;
-      }
+    if (keys.has("ArrowUp") && this.isOnGround()) {
+      this.up();
     }
 
-    if (keys.includes("ArrowDown") && this.isOnGround())
-      this.playerType = "sit";
+    if (keys.has("ArrowDown") && this.isOnGround()) this.playerType = "sit";
 
     if (!this.isOnGround()) this.vy += this.weight;
     else this.vy = 0;
+
+    if (this.isOnGround() && this.playerType === "jump")
+      this.playerType = "run";
+
+    if (this.vy < 0) this.playerType = "jump";
+    if (this.vy > 0) this.playerType = "fall";
+    if (!this.vy && this.isOnGround() && this.playerType !== "sit")
+      this.playerType = "run";
   }
 
   draw(context) {
@@ -80,6 +84,11 @@ export class Player {
   }
 
   isOnGround() {
-    return this.dy >= this.game.height - this.height;
+    return this.dy >= this.game.height - this.height - this.layerHeight;
+  }
+
+  up() {
+    this.vy -= 20;
+    this.dy += this.vy;
   }
 }

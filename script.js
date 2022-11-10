@@ -7,12 +7,13 @@ const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext("2d");
 canvas.width = window.width = 500;
 canvas.height = window.height = 500;
+const layerHeight = 0;
 
 class Game {
   constructor(width, height) {
     this.width = width;
     this.height = height;
-    this.player = new Player(this, "run");
+    this.player = new Player(this, "stand", layerHeight);
     this.input = new InputHandler();
   }
 
