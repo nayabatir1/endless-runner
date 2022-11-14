@@ -2,12 +2,13 @@
 
 import { InputHandler } from "./inputHandler.js";
 import { Player } from "./player.js";
+import { updateBg, drawBg } from "./background.js";
 
 const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext("2d");
 canvas.width = window.width = 500;
 canvas.height = window.height = 500;
-const layerHeight = 0;
+const layerHeight = 60;
 
 class Game {
   constructor(width, height) {
@@ -19,9 +20,11 @@ class Game {
 
   update() {
     this.player.update(this.input.keys);
+    updateBg();
   }
 
   draw(context) {
+    drawBg(context);
     this.player.draw(context);
   }
 }
