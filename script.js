@@ -20,7 +20,7 @@ class Game {
 
   update() {
     this.player.update(this.input.keys);
-    updateBg();
+    if (this.player.playerType !== "sit") updateBg();
   }
 
   draw(context) {
